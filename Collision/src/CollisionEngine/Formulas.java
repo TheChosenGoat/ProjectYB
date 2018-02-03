@@ -1,4 +1,4 @@
-package CollisionEngineTest;
+package CollisionEngine;
 
 public class Formulas {
 

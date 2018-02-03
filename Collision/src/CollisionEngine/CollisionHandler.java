@@ -1,12 +1,12 @@
-package CollisionEngineTest;
+package CollisionEngine;
 
 import java.time.temporal.JulianFields;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import CollisionEngineTest.Ball;
-import CollisionEngineTest.Formulas;
-import CollisionEngineTest.Vector2D;
+import CollisionEngine.Ball;
+import CollisionEngine.Formulas;
+import CollisionEngine.Vector2D;
 /*
  * A class that handles, calculates and executes the Collisions of the balls.
  *  

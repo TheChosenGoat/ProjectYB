@@ -1,4 +1,4 @@
-package CollisionEngineTest;
+package CollisionEngine;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

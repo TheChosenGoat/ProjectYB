@@ -8,9 +8,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import CollisionEngineTest.*;
+import CollisionEngine.*;
 
 import javax.swing.*;
+
+import CollisionEngine.Ball;
+import CollisionEngine.CollisionHandler;
+import CollisionEngine.Vector2D;
 
 public class Board extends JPanel implements Runnable, ActionListener, MouseListener, MouseMotionListener{
 	private JFrame frame;
