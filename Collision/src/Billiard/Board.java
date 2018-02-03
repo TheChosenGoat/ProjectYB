@@ -103,7 +103,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 		this.addMouseMotionListener(this);
 		
 		lowerPanel = new JPanel();
-		lowerPanel.setPreferredSize(new Dimension(xBounds, 100));
+		lowerPanel.setPreferredSize(new Dimension(xBounds, 72));
 
 
 		backToLauncher = new JButton("Back to Launcher");
