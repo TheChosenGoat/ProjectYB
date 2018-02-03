@@ -3,6 +3,8 @@ package CollisionEngineTest;
 import java.time.temporal.JulianFields;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import com.sun.prism.paint.Color;
 /*
  * A class that handles, calculates and executes the Collisions of the balls.
  *  
@@ -128,9 +130,9 @@ public class CollisionHandler {
 		for(int i= 0; i< balls.size(); i++) {
 
 			if((balls.get(i).speed.x>=0 && balls.get(i).acceleration.x>balls.get(i).speed.x) ||
-			   (balls.get(i).speed.x<=0 && balls.get(i).acceleration.x<balls.get(i).speed.x) ||
-			   (balls.get(i).speed.y>=0 && balls.get(i).acceleration.y>balls.get(i).speed.y) ||
-			   (balls.get(i).speed.y<=0 && balls.get(i).acceleration.y<balls.get(i).speed.y)
+					(balls.get(i).speed.x<=0 && balls.get(i).acceleration.x<balls.get(i).speed.x) ||
+					(balls.get(i).speed.y>=0 && balls.get(i).acceleration.y>balls.get(i).speed.y) ||
+					(balls.get(i).speed.y<=0 && balls.get(i).acceleration.y<balls.get(i).speed.y)
 					) {
 				balls.get(i).setSpeed(new Vector2D(0, 0));
 				balls.get(i).setAcceleration(new Vector2D(0, 0));
@@ -156,11 +158,20 @@ public class CollisionHandler {
 			}
 			else {
 				if(holeFall) {
-					balls.remove(b1Pointer);
+					System.out.println("#########################################");
+					System.out.println(b1Pointer.color);
+					if(b1Pointer.color.equals(new java.awt.Color(255,255,255))){
+						b1Pointer.x = ((int)(0.216*xBounds));
+						b1Pointer.y = (yBounds/2);
+						b1Pointer.speed = new Vector2D(0, 0);
+					}
+					else{
+						balls.remove(b1Pointer);
+					}
 					holeFall = false;
-					
+
 				}
-			else if(xOrYWallActual == true) 
+				else if(xOrYWallActual == true) 
 					b1Pointer.speed.x = b1Pointer.speed.x*-1;
 
 				else 
