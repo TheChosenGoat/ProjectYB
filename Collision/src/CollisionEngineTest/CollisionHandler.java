@@ -3,6 +3,10 @@ package CollisionEngineTest;
 import java.time.temporal.JulianFields;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import CollisionEngineTest.Ball;
+import CollisionEngineTest.Formulas;
+import CollisionEngineTest.Vector2D;
 /*
  * A class that handles, calculates and executes the Collisions of the balls.
  *  
@@ -44,7 +48,7 @@ public class CollisionHandler {
 	 */
 	public double checkClosestTime(ArrayList<Ball> balls, ArrayList<Ball> holes){
 		double ti = 0;
-		double th = 0;
+		double th = NO_COLLISION;
 		double tw = 0;
 		double LowestT = NO_COLLISION;
 		for(int i= 0; i< balls.size()-1; i++) {
@@ -60,19 +64,20 @@ public class CollisionHandler {
 			}
 
 		}
-		for(int i= 0; i< balls.size(); i++) {
+		if(!holes.isEmpty()){
+			for(int i= 0; i< balls.size(); i++) {
 
-			for(int j= 0; j< holes.size(); j++) {
-				th= Formulas.formula5(balls.get(i), holes.get(j));
-				if (th <= LowestT && th>=EPSILON) {
-					LowestT = th;
-					b1Pointer = balls.get(i);
-					b2Pointer = null;
-					holeFall = true;
+				for(int j= 0; j< holes.size(); j++) {
+					th= Formulas.formula5(balls.get(i), holes.get(j));
+					if (th <= LowestT && th>=EPSILON) {
+						LowestT = th;
+						b1Pointer = balls.get(i);
+						b2Pointer = null;
+						holeFall = true;
+					}
+
 				}
-
 			}
-
 		}
 		for(int i= 0; i< balls.size(); i++) {
 			tw = Formulas.formula4WithAcceleration(balls.get(i), xBounds, yBounds, mu);
@@ -127,6 +132,7 @@ public class CollisionHandler {
 	public long handle(ArrayList<Ball> balls, ArrayList<Ball> holes, long actualJump, long jumpConstant) {
 		for(int i= 0; i< balls.size(); i++) {
 
+			//Stops a ball that has stopped moving
 			if((balls.get(i).speed.x>=0 && balls.get(i).acceleration.x>balls.get(i).speed.x) ||
 					(balls.get(i).speed.x<=0 && balls.get(i).acceleration.x<balls.get(i).speed.x) ||
 					(balls.get(i).speed.y>=0 && balls.get(i).acceleration.y>balls.get(i).speed.y) ||
@@ -156,8 +162,6 @@ public class CollisionHandler {
 			}
 			else {
 				if(holeFall) {
-					System.out.println("#########################################");
-					System.out.println(b1Pointer.color);
 					if(b1Pointer.color.equals(new java.awt.Color(255,255,255))){
 						b1Pointer.x = ((int)(0.216*xBounds));
 						b1Pointer.y = (yBounds/2);

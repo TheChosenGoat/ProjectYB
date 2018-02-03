@@ -15,7 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import CollisionEngine.*;
+import CollisionEngineTest.*;
 
 import javax.swing.*;
 
@@ -62,6 +62,9 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseMoti
 	//Those mark the dimensions of the play area. 
 	private final static int xBounds = 400;
 	private final static int yBounds = 400;
+	
+	//A variable that is the friction teller.
+	protected static final float mu = 0.0000f;
 	//A Color array. used when spawning balls with random colors.
 	//Colors are:
 	/*
@@ -123,6 +126,8 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseMoti
 	private static CollisionHandler handleMan;
 	//A Ball ArrayList that holds all the balls currently existing.
 	private static ArrayList<Ball> balls = null;
+	//A Ball arrayList for all the holes- USED ONLY IN BILLIARD
+	private static ArrayList<Ball> holes = new ArrayList<Ball>();
 
 	//jumpConstant is the default jump value.
 	private final static long jumpConstant=1;
@@ -168,7 +173,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseMoti
 		frame.setSize(xBounds, yBounds+130);
 		frame.setResizable(false);
 		frame.setVisible(true);
-		handleMan = new CollisionHandler(xBounds, yBounds);
+		handleMan = new CollisionHandler(xBounds, yBounds, mu);
 	}
 
 	public void preBootUp() {
@@ -197,7 +202,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseMoti
 		tutorialFrame.setSize(xBounds, yBounds+130);
 		tutorialFrame.setResizable(false);
 		tutorialFrame.setVisible(true);
-		handleMan = new CollisionHandler(xBounds, yBounds);
+		handleMan = new CollisionHandler(xBounds, yBounds, mu);
 	}
 
 	//Main method
@@ -232,7 +237,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseMoti
 				if(!quit) {
 					checkTouch();
 					framesPassed++;
-					actualJump = handleMan.handle(balls, actualJump, jumpConstant);
+					actualJump = handleMan.handle(balls, holes, actualJump, jumpConstant);
 					repaint();
 				}
 				//At certain points in the game add a ball.

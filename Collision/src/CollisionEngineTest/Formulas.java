@@ -125,13 +125,13 @@ public class Formulas {
 
 		double t1 = (-b-Math.sqrt(dis))/(2*a);
 		double t2 = (-b+Math.sqrt(dis))/(2*a);
-		//אין התנגשות - הכדורים מתרחקים זה מזה
+		//×�×™×Ÿ ×”×ª× ×’×©×•×ª - ×”×›×“×•×¨×™×� ×ž×ª×¨×—×§×™×� ×–×” ×ž×–×”
 		if(t1*t2 < 0) 
 			return CollisionHandler.NO_COLLISION;
-		//ההתנגשות בין בכדורים כבר בעצמה
+		//×”×”×ª× ×’×©×•×ª ×‘×™×Ÿ ×‘×›×“×•×¨×™×� ×›×‘×¨ ×‘×¢×¦×ž×”
 		if(t1*t2 > 0 && t1+t2<0)
 			return CollisionHandler.NO_COLLISION;
-		//אין התנגשות - הכדורים עלולים להתנגש רק לא כרגע
+		//×�×™×Ÿ ×”×ª× ×’×©×•×ª - ×”×›×“×•×¨×™×� ×¢×œ×•×œ×™×� ×œ×”×ª× ×’×© ×¨×§ ×œ×� ×›×¨×’×¢
 		if(t1*t2 > 0 && t1+t2 > 0) {
 			if(CollisionHandler.EPSILON<=t1  && t1<t2) {
 				return t1;
@@ -152,6 +152,8 @@ public class Formulas {
 	 * @return time when ball1 will hit wall. or CollisionHandler.NO_COLLISION if not.
 	 */
 	public static double formula4WithAcceleration(Ball ball1, int xBounds, int yBounds, float mu) {
+		if(mu==0f)
+			return formula4(ball1, xBounds, yBounds);
 		//returning no collision if the ball has no speed at all.
 		if(ball1.speed.x == 0 && ball1.speed.y == 0)
 			return CollisionHandler.NO_COLLISION;
@@ -180,10 +182,10 @@ public class Formulas {
 				tX = CollisionHandler.NO_COLLISION;
 			else if(t1*t2 < 0) 
 				tX =  CollisionHandler.NO_COLLISION;
-			//ההתנגשות בין בכדורים כבר בעצמה
+			//×”×”×ª× ×’×©×•×ª ×‘×™×Ÿ ×‘×›×“×•×¨×™×� ×›×‘×¨ ×‘×¢×¦×ž×”
 			else if(t1*t2 > 0 && t1+t2<0)
 				tX = CollisionHandler.NO_COLLISION;
-			//אין התנגשות - הכדורים עלולים להתנגש רק לא כרגע
+			//×�×™×Ÿ ×”×ª× ×’×©×•×ª - ×”×›×“×•×¨×™×� ×¢×œ×•×œ×™×� ×œ×”×ª× ×’×© ×¨×§ ×œ×� ×›×¨×’×¢
 			else if(t1*t2 > 0 && t1+t2 > 0) {
 				if(CollisionHandler.EPSILON<=t1  && t1<t2) {
 					tX = t1;
@@ -216,10 +218,10 @@ public class Formulas {
 				tY = CollisionHandler.NO_COLLISION;
 			else if(t1*t2 < 0) 
 				tY =  CollisionHandler.NO_COLLISION;
-			//ההתנגשות בין בכדורים כבר בעצמה
+			//×”×”×ª× ×’×©×•×ª ×‘×™×Ÿ ×‘×›×“×•×¨×™×� ×›×‘×¨ ×‘×¢×¦×ž×”
 			else if(t1*t2 > 0 && t1+t2<0)
 				tY = CollisionHandler.NO_COLLISION;
-			//אין התנגשות - הכדורים עלולים להתנגש רק לא כרגע
+			//×�×™×Ÿ ×”×ª× ×’×©×•×ª - ×”×›×“×•×¨×™×� ×¢×œ×•×œ×™×� ×œ×”×ª× ×’×© ×¨×§ ×œ×� ×›×¨×’×¢
 			else if(t1*t2 > 0 && t1+t2 > 0) {
 				if(CollisionHandler.EPSILON<=t1  && t1<t2) {
 					tY = t1;

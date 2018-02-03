@@ -28,7 +28,8 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 	
 	private final static int xBounds = 800;
 	private final static int yBounds = 400;
-
+	
+	//A variable that is the friction teller.
 	protected static final float mu = 0.000012f;
 
 	static final Color[] colors = {Color.GREEN,
@@ -45,7 +46,9 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 			Color.WHITE,};
 
 	private static CollisionHandler handleMan;
+	//A Ball ArrayList that holds all the balls currently existing.
 	private static ArrayList<Ball> balls = null;
+	//A Ball arrayList for all the holes
 	private static ArrayList<Ball> holes = new ArrayList<Ball>();
 	static {
 		holes.add(new Ball(0, 0, 30, 0, 0, 0, Color.DARK_GRAY));

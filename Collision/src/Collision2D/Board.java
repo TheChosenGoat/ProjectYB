@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import CollisionEngine.*;
+import CollisionEngineTest.*;
 
 import javax.swing.*;
 
@@ -25,6 +25,9 @@ public class Board extends JPanel implements Runnable, ActionListener{
 
 	private final static int xBounds = 400;
 	private final static int yBounds = 400;
+	//A variable that is the friction teller.
+	protected static final float mu = 0.0000f;
+
 
 	static final Color[] colors = {Color.GREEN,
 			Color.BLUE,
@@ -40,7 +43,12 @@ public class Board extends JPanel implements Runnable, ActionListener{
 			Color.WHITE,};
 
 	private static CollisionHandler handleMan;
+	
+	//A Ball ArrayList that holds all the balls currently existing.
 	private static ArrayList<Ball> balls = null;
+	//A Ball arrayList for all the holes- USED ONLY IN BILLIARD
+	private static ArrayList<Ball> holes = new ArrayList<Ball>();
+
 
 	//jumpConstant is the default jump value.
 	private final static long jumpConstant=1;
@@ -102,7 +110,7 @@ public class Board extends JPanel implements Runnable, ActionListener{
 		frame.add(this);
 		frame.add(lowerPanel, BorderLayout.SOUTH);
 
-		handleMan = new CollisionHandler(xBounds, yBounds);
+		handleMan = new CollisionHandler(xBounds, yBounds, mu);
 
 
 
@@ -129,10 +137,10 @@ public class Board extends JPanel implements Runnable, ActionListener{
 			try{
 				//If the frame is closing, terminating the thread.
 				if(!this.frame.isVisible())
-				terminate();
+					terminate();
 				actualJump=jumpConstant;
 				System.out.println("cycle");
-				handleMan.handle(balls, actualJump, jumpConstant);
+				handleMan.handle(balls, holes, actualJump, jumpConstant);
 				repaint();
 				Thread.sleep(actualJump);
 			}
@@ -159,14 +167,14 @@ public class Board extends JPanel implements Runnable, ActionListener{
 					(int) (balls.get(i).getY()-balls.get(i).getRadius()),
 					(int) balls.get(i).getRadius()*2,
 					(int) balls.get(i).getRadius()*2);
-			
+
 			g.setColor(Color.RED);
-			
+
 			//this should be another button
-//			g.drawLine((int)balls.get(i).getX(),
-//					(int)balls.get(i).getY(), 
-//					(int)((balls.get(i).getX()+ balls.get(i).getxSpeed()*200)),
-//					(int)((balls.get(i).getY()+ balls.get(i).getySpeed()*200)));
+			//			g.drawLine((int)balls.get(i).getX(),
+			//					(int)balls.get(i).getY(), 
+			//					(int)((balls.get(i).getX()+ balls.get(i).getxSpeed()*200)),
+			//					(int)((balls.get(i).getY()+ balls.get(i).getySpeed()*200)));
 		}
 
 	}
@@ -209,7 +217,7 @@ public class Board extends JPanel implements Runnable, ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if ("AddBall".equals(e.getActionCommand())) {
-			ExtraMethods.addBall(balls, xBounds, yBounds, colors);
+			ExtraMethods.addBall(balls, xBounds, yBounds, mu, colors);
 		}
 		else if ("Magic".equals(e.getActionCommand())) {
 			magicFlag= !magicFlag;
