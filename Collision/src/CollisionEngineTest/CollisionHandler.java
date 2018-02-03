@@ -3,8 +3,6 @@ package CollisionEngineTest;
 import java.time.temporal.JulianFields;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import com.sun.prism.paint.Color;
 /*
  * A class that handles, calculates and executes the Collisions of the balls.
  *  
