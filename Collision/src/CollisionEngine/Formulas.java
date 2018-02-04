@@ -170,8 +170,8 @@ public class Formulas {
 			if(ball1.speed.x>0) {
 				c = ball1.x+ball1.radius-xBounds;
 			}
-			else if(ball1.speed.x-ball1.radius<0) {
-				c = ball1.x;
+			else if(ball1.speed.x<0) {
+				c = ball1.x-ball1.radius;
 			}
 			double dis = (b*b) -4*a*c;
 			

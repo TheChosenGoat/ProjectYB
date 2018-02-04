@@ -1,9 +1,14 @@
 package CollisionEngine;
 
+import java.awt.Color;
 import java.time.temporal.JulianFields;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
+import javax.swing.*;
+
+import Billiard.Board;
 import CollisionEngine.Ball;
 import CollisionEngine.Formulas;
 import CollisionEngine.Vector2D;
@@ -51,8 +56,10 @@ public class CollisionHandler {
 		double th = NO_COLLISION;
 		double tw = 0;
 		double LowestT = NO_COLLISION;
+		Billiard.Board.ballsAreMoving = false;
 		for(int i= 0; i< balls.size()-1; i++) {
-
+			if(!balls.get(i).speed.equals(new Vector2D(0,0)))
+				Billiard.Board.ballsAreMoving = true;
 			for(int j= i+1; j< balls.size(); j++) {
 				ti= Formulas.formula5(balls.get(i), balls.get(j));
 				if (ti <= LowestT && ti>=EPSILON) {
@@ -130,6 +137,7 @@ public class CollisionHandler {
 	 * @param jumpConstant- the normal jump time
 	 */
 	public long handle(ArrayList<Ball> balls, ArrayList<Ball> holes, long actualJump, long jumpConstant) {
+		//For every ball in balls:
 		for(int i= 0; i< balls.size(); i++) {
 
 			//Stops a ball that has stopped moving
@@ -142,40 +150,58 @@ public class CollisionHandler {
 				balls.get(i).setAcceleration(new Vector2D(0, 0));
 
 			}
+			//If ball is still moving update it's acceleration.
 			else if (balls.get(i).speed.x != 0 && balls.get(i).speed.y != 0)
 				balls.get(i).acceleration = new Vector2D((mu*10),(float)(balls.get(i).speed.getAngle()+Math.PI));
 
 		}
+		//Check when the closest crash will happen.
 		t = checkClosestTime(balls, holes);
+		//If the closest crash will happen in less than the normal jump time:
 		if(t<= jumpConstant) {
 			actualJump = (long)t;
+			//For every ball in balls:
 			for(int i= 0; i< balls.size(); i++) {
-
+				//Add acceleration to balls.
 				balls.get(i).speed.add(balls.get(i).acceleration);
-
+				//Move balls 
 				balls.get(i).x +=balls.get(i).speed.x*t;
 				balls.get(i).y +=balls.get(i).speed.y*t;
 
 			}
+			//If the closest collision will happen between two balls:
 			if(b2Pointer!=null) {
 				collide();
 			}
+			//else (Meaning the crash in either between a ball and a wall or a ball and a hole):
 			else {
+				//If a ball fell in a hole:
 				if(holeFall) {
-					if(b1Pointer.color.equals(new java.awt.Color(255,255,255))){
-						b1Pointer.x = ((int)(0.216*xBounds));
-						b1Pointer.y = (yBounds/2);
+					//If the falling ball is a white ball:
+					if(b1Pointer.color == Color.WHITE){
+						b1Pointer.x = (7000);
+						b1Pointer.y = (7000);
 						b1Pointer.speed = new Vector2D(0, 0);
+						Billiard.Board.whiteHasFallen = true;
 					}
-					else{
+					//If the falling ball is a red ball add redScore and remove ball
+					else if(b1Pointer.color == (Color.RED)){
+						Billiard.Board.redScore++;
 						balls.remove(b1Pointer);
 					}
+					//If the falling ball is a blue ball add blueScore and remove ball
+					else if(b1Pointer.color == (Color.BLUE)){
+						Billiard.Board.blueScore++;
+						balls.remove(b1Pointer);
+					}
+					//reset holeFall after fall.
 					holeFall = false;
 
 				}
+				//Else if the next crash will happen with the left or white walls:
 				else if(xOrYWallActual == true) 
 					b1Pointer.speed.x = b1Pointer.speed.x*-1;
-
+				//Else if the next crash will happen with the up or down walls:
 				else 
 					b1Pointer.speed.y = b1Pointer.speed.y*-1;
 
