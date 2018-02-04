@@ -140,9 +140,9 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseMoti
 	//of a board instance.
 	public void bootUp() {
 		System.out.println("bootup");
-
+		
+		
 		highScore = ExtraMethodsDatabase.readHighScoreFromFile();
-
 		//creates ArrayList of balls and adds balls to it.
 		balls= new ArrayList<Ball>();
 

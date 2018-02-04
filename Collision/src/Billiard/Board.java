@@ -8,6 +8,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
 import CollisionEngine.*;
 
 import javax.swing.*;
@@ -24,7 +26,8 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 
 	//While this is true the thread is running
 	private boolean running = true;
-	
+	//turn == 0 - RED's turn. 1 is BLUE's.
+	private int turn = 0;
 	private double eX = 0;
 	private double eY = 0;
 	private boolean drag = false;
@@ -73,6 +76,12 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 
 	public void bootUp() {
 		System.out.println("bootup");
+		
+		//Random turn- RED or BLUE
+		turn = ThreadLocalRandom.current().nextInt(0, 2);
+		System.out.println("#####################");
+		System.out.println(turn);
+
 		//creates ArrayList of balls and adds balls to it.
 		balls= new ArrayList<Ball>();
 
@@ -83,24 +92,24 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 		double blackSpotX = 0.825*xBounds;
 		double blackSpotY = yBounds/2;
 		balls.add(new Ball(blackSpotX-67, blackSpotY, 18,4f,0,0,Color.BLUE));
-		balls.add(new Ball(blackSpotX-34, blackSpotY-19, 18,4f,0,0,Color.GREEN));
-		balls.add(new Ball(blackSpotX-34, blackSpotY+19, 18,4f,0,0,Color.YELLOW));
+		balls.add(new Ball(blackSpotX-34, blackSpotY-19, 18,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX-34, blackSpotY+19, 18,4f,0,0,Color.BLUE));
 		
-		balls.add(new Ball(blackSpotX, blackSpotY-38,18,4f,0,0,Color.MAGENTA));
+		balls.add(new Ball(blackSpotX, blackSpotY-38,18,4f,0,0,Color.RED));
 		
 		balls.add(new Ball(blackSpotX, blackSpotY,19,4f,0,0,Color.BLACK));
 
-		balls.add(new Ball(blackSpotX, blackSpotY+38,18,4f,0,0,Color.MAGENTA));
+		balls.add(new Ball(blackSpotX, blackSpotY+38,18,4f,0,0,Color.BLUE));
 		
-		balls.add(new Ball(blackSpotX+34, blackSpotY-57, 18,4f,0,0,Color.YELLOW));
-		balls.add(new Ball(blackSpotX+34, blackSpotY-19, 18,4f,0,0,Color.CYAN));
-		balls.add(new Ball(blackSpotX+34, blackSpotY+19, 18,4f,0,0,Color.YELLOW));
-		balls.add(new Ball(blackSpotX+34, blackSpotY+57, 18,4f,0,0,Color.YELLOW));
+		balls.add(new Ball(blackSpotX+34, blackSpotY-57, 18,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+34, blackSpotY-19, 18,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX+34, blackSpotY+19, 18,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+34, blackSpotY+57, 18,4f,0,0,Color.BLUE));
 		
 		balls.add(new Ball(blackSpotX+68, blackSpotY-74, 18,4f,0,0,Color.RED));
-		balls.add(new Ball(blackSpotX+68, blackSpotY-37, 18,4f,0,0,Color.ORANGE));
-		balls.add(new Ball(blackSpotX+68, blackSpotY, 18,4f,0,0,Color.BLUE));
-		balls.add(new Ball(blackSpotX+68, blackSpotY+37, 18,4f,0,0,Color.ORANGE));
+		balls.add(new Ball(blackSpotX+68, blackSpotY-37, 18,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX+68, blackSpotY, 18,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+68, blackSpotY+37, 18,4f,0,0,Color.BLUE));
 		balls.add(new Ball(blackSpotX+68, blackSpotY+74, 18,4f,0,0,Color.RED));
 
 		
@@ -185,7 +194,8 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 		g.fillOval((int)(0.216*xBounds), yBounds/2, 5, 5);
 		g.setColor(Color.BLACK);
 		g.fillOval((int)(0.825*xBounds), yBounds/2, 5, 5);
-		
+		g.setColor(Color.GREEN);
+		g.drawString(String.valueOf(turn), 10, 50);
 		
 		for(int i=0; i<balls.size(); i++) {
 			g.setColor(balls.get(i).getColor());	
