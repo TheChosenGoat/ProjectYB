@@ -65,7 +65,8 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 	private final static int whiteLine = xBounds/5;
 	public final static int ballSize = 18;
 	//A variable that is the friction teller.
-	protected static final float mu = 0.00003f;
+	//Was originaly 0.00003f.
+	protected static final float mu = 0.00005f;
 
 	static final Color[] colors = {};
 
@@ -523,7 +524,7 @@ class LowerJPanel extends JPanel{
 				g.setColor(Color.ORANGE);
 				Font f = new Font("serif", Font.PLAIN, 100);
 				g.setFont(f);
-				g.drawString("WIN  RED  WIN", 340, 80);
+				g.drawString("WIN  RED", 340, 80);
 
 			}
 		}
@@ -540,7 +541,7 @@ class LowerJPanel extends JPanel{
 				g.setColor(Color.ORANGE);
 				Font f = new Font("serif", Font.PLAIN, 100);
 				g.setFont(f);
-				g.drawString("WIN  BLUE  WIN", 340, 80);
+				g.drawString("WIN  BLUE", 340, 80);
 
 			}
 		}
