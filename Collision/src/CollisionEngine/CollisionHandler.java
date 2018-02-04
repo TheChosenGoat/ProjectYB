@@ -178,7 +178,11 @@ public class CollisionHandler {
 				//If a ball fell in a hole:
 				if(holeFall) {
 					//If the falling ball is a white ball:
-					if(b1Pointer.color == Color.WHITE){
+					if(b1Pointer.color == Color.BLACK){
+						Billiard.Board.blackHasFallen = true;
+						balls.remove(b1Pointer);
+					}
+					else if(b1Pointer.color == Color.WHITE){
 						b1Pointer.x = (7000);
 						b1Pointer.y = (7000);
 						b1Pointer.speed = new Vector2D(0, 0);
@@ -186,12 +190,18 @@ public class CollisionHandler {
 					}
 					//If the falling ball is a red ball add redScore and remove ball
 					else if(b1Pointer.color == (Color.RED)){
+						if(Board.turn == 0)
+							Board.currentColorBallHasFallen = true;
 						Billiard.Board.redScore++;
+						Board.fallenRedBalls++;
 						balls.remove(b1Pointer);
 					}
 					//If the falling ball is a blue ball add blueScore and remove ball
 					else if(b1Pointer.color == (Color.BLUE)){
+						if(Board.turn == 1)
+							Board.currentColorBallHasFallen = true;
 						Billiard.Board.blueScore++;
+						Board.fallenBlueBalls++;
 						balls.remove(b1Pointer);
 					}
 					//reset holeFall after fall.

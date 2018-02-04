@@ -14,21 +14,25 @@ import CollisionEngine.*;
 
 import javax.swing.*;
 
+import com.sun.org.apache.xml.internal.serialize.OutputFormat.Defaults;
+
 import CollisionEngine.Ball;
 import CollisionEngine.CollisionHandler;
 import CollisionEngine.Vector2D;
 
 public class Board extends JPanel implements Runnable, ActionListener, MouseListener, MouseMotionListener{
 	private JFrame frame;
-	private JPanel lowerPanel;
+	private static JPanel lowerPanel;
 
 	private JButton backToLauncher;
 
 	//While this is true the thread is running
 	private boolean running = true;
+	//If this boolean is true the game is over.
+	public static boolean quit =false;
 	//Billiard Variables.
 	//turn == 0 - RED's turn. 1 is BLUE's.
-	private int turn = 0;
+	public static int turn = 0;
 	//Red and blue scores.
 	public static int redScore = 0;
 	public static int blueScore = 0;
@@ -36,13 +40,18 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 	public static boolean playerHasMadeHisTurn = false;
 	//Are balls moving? True if yes.
 	public static boolean ballsAreMoving = false;
+	//Did the black ball fall into a hole? true if yes.
+	public static boolean blackHasFallen = false;
 	//Did the white ball fall into a hole? true if yes.
 	public static boolean whiteHasFallen = false;
 	//Did white touch another ball? true if yes.
 	public static boolean whiteTouchedAnotherBall = false;
 	//Did ball the same color as the current player fall? true if yes.
 	public static boolean currentColorBallHasFallen = false;
-
+	//Did all the red balls fell? true if yes.
+	public static boolean allRedBallsFell = false;
+	//Did all the blue balls fell? true if yes.
+	public static boolean allBlueBallsFell = false;
 	private double eX = 0;
 	private double eY = 0;
 	//Is the player dragging the mouse to shoot the white ball?
@@ -54,6 +63,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 	private final static int yBounds = 568;
 	//A white line that makes the border of where a white ball can be placed.
 	private final static int whiteLine = xBounds/5;
+	public final static int ballSize = 18;
 	//A variable that is the friction teller.
 	protected static final float mu = 0.00003f;
 
@@ -62,6 +72,10 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 	private static CollisionHandler handleMan;
 	//A Ball ArrayList that holds all the balls currently existing.
 	private static ArrayList<Ball> balls = null;
+	//list of fallen red balls
+	public static int fallenRedBalls = 0;
+	//list of fallen blue balls
+	public static int fallenBlueBalls = 0;
 	//A Ball arrayList for all the holes
 	private static ArrayList<Ball> holes = new ArrayList<Ball>();
 	static {
@@ -97,26 +111,26 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 		//1.444444444
 		double blackSpotX = 0.825*xBounds;
 		double blackSpotY = yBounds/2;
-		balls.add(new Ball(blackSpotX-67, blackSpotY, 18,4f,0,0,Color.BLUE));
-		balls.add(new Ball(blackSpotX-34, blackSpotY-19, 18,4f,0,0,Color.RED));
-		balls.add(new Ball(blackSpotX-34, blackSpotY+19, 18,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX-67, blackSpotY, ballSize,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX-34, blackSpotY-19, ballSize,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX-34, blackSpotY+19, ballSize,4f,0,0,Color.BLUE));
 
-		balls.add(new Ball(blackSpotX, blackSpotY-38,18,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX, blackSpotY-38,ballSize,4f,0,0,Color.RED));
 
-		balls.add(new Ball(blackSpotX, blackSpotY,19,4f,0,0,Color.BLACK));
+		balls.add(new Ball(blackSpotX, blackSpotY,ballSize,4f,0,0,Color.BLACK));
 
-		balls.add(new Ball(blackSpotX, blackSpotY+38,18,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX, blackSpotY+38,ballSize,4f,0,0,Color.BLUE));
 
-		balls.add(new Ball(blackSpotX+34, blackSpotY-57, 18,4f,0,0,Color.RED));
-		balls.add(new Ball(blackSpotX+34, blackSpotY-19, 18,4f,0,0,Color.BLUE));
-		balls.add(new Ball(blackSpotX+34, blackSpotY+19, 18,4f,0,0,Color.RED));
-		balls.add(new Ball(blackSpotX+34, blackSpotY+57, 18,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX+34, blackSpotY-57, ballSize,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+34, blackSpotY-19, ballSize,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX+34, blackSpotY+19, ballSize,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+34, blackSpotY+57, ballSize,4f,0,0,Color.BLUE));
 
-		balls.add(new Ball(blackSpotX+68, blackSpotY-74, 18,4f,0,0,Color.RED));
-		balls.add(new Ball(blackSpotX+68, blackSpotY-37, 18,4f,0,0,Color.BLUE));
-		balls.add(new Ball(blackSpotX+68, blackSpotY, 18,4f,0,0,Color.RED));
-		balls.add(new Ball(blackSpotX+68, blackSpotY+37, 18,4f,0,0,Color.BLUE));
-		balls.add(new Ball(blackSpotX+68, blackSpotY+74, 18,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+68, blackSpotY-74, ballSize,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+68, blackSpotY-37, ballSize,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX+68, blackSpotY, ballSize,4f,0,0,Color.RED));
+		balls.add(new Ball(blackSpotX+68, blackSpotY+37, ballSize,4f,0,0,Color.BLUE));
+		balls.add(new Ball(blackSpotX+68, blackSpotY+74, ballSize,4f,0,0,Color.RED));
 
 
 		this.setPreferredSize(new Dimension(xBounds, yBounds));
@@ -124,9 +138,9 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
-		lowerPanel = new JPanel();
+		lowerPanel = new LowerJPanel();
 		lowerPanel.setBackground(Color.LIGHT_GRAY);
-		lowerPanel.setPreferredSize(new Dimension(xBounds, 72));
+		//		lowerPanel.setPreferredSize(new Dimension(xBounds, 72));
 
 
 		backToLauncher = new JButton("Back to Launcher");
@@ -141,7 +155,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 		frame= new JFrame();
 		frame.setTitle("2D Collision");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setSize(xBounds, yBounds+100);
+		frame.setSize(xBounds, yBounds+130);
 		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setLayout(new BorderLayout());
@@ -175,48 +189,107 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 				//If the frame is closing, terminating the thread.
 				if(!this.frame.isVisible())
 					terminate();
+				if(!quit){
+					//If player has made his turn and no balls are moving:
+					if(playerHasMadeHisTurn && !ballsAreMoving){
+						//If a black ball has fallen:
+						if(blackHasFallen){
+							//If it's Red's turn not all the red balls fell in the former
+							//turns and the black ball fell in this one then change turn to blue and quit.
+							//RED WINS
+							if(turn ==0 && !allRedBallsFell){
+								turn = 1-turn;
+								quit = true;
+//								return;
+							}
+							//Same as last if but for blue.
+							//BLUE WINS
+							else if(turn ==1 && !allBlueBallsFell){
+								turn = 1-turn;
+								quit = true;
+//								return;
+							}
 
-				//If player has made his turn and no balls are moving:
-				if(playerHasMadeHisTurn && !ballsAreMoving){
+							//If this is red's turn and all the red balls already fell in 
+							//former turns, and in this turn the black ball fell and 
+							//the white didn't then quit.
+							//RED WINS
+							if(turn == 0 && allRedBallsFell && !whiteHasFallen){
+								quit = true;
+//								return;
+							}
+							//Same as last if but for blue.
+							//BLUE WINS
+							else if(turn == 1 && allBlueBallsFell && !whiteHasFallen){
+								quit = true;
+//								return;
+							}
+							//If it's red's turn, and his balls fell in former turns,
+							//black ball fell in this turn, and white DID fall in this turn
+							//then change turn and quit.
+							//BLUE WINS
+							if(turn == 0 && allRedBallsFell && whiteHasFallen){
+								turn = 1-turn;
+								quit = true;
+//								return;
+							}
+							//Same as last if but for blue
+							//RED WINS
+							else if(turn == 1 && allBlueBallsFell && whiteHasFallen){
+								turn = 1-turn;
+								quit = true;
+//								return;
+							}
+						}
 
-					//If the white ball has fallen in a hole
-					if(whiteHasFallen){
-						//Change turn and reset all the flags exept the whiteHasFallen one.
-						//ballsAreMoving is already false;
-						//That is because it will be used later when replacing the white ball
-						//on Board.
-						turn = 1-turn;	
-						playerHasMadeHisTurn = false;
+
+						//If the white ball has fallen in a hole
+						else if(whiteHasFallen){
+							//Change turn and reset all the flags exept the whiteHasFallen one.
+							//ballsAreMoving is already false;
+							//That is because it will be used later when replacing the white ball
+							//on Board.
+							turn = 1-turn;	
+							playerHasMadeHisTurn = false;
+							whiteTouchedAnotherBall = false;
+							currentColorBallHasFallen = false;
+						}
+
+						//If a ball of the same color as the current player falls in a hole:
+						else if(currentColorBallHasFallen){
+							//Reset all flags (whiteHasFallen and ballsAreMoving are already false). 
+							//The turn remains with the same player.
+							playerHasMadeHisTurn = false;
+							currentColorBallHasFallen = false;
+							whiteTouchedAnotherBall = false;
+						}
+
+						//If white ball didn't touch any other ball:
+						else if(!whiteTouchedAnotherBall){
+							//The other player gets the turn.
+							turn = 1-turn;
+							playerHasMadeHisTurn = false;
+						}
+
+						if(Board.fallenRedBalls == 7)
+							Board.allRedBallsFell = true;
+
+						if(Board.fallenBlueBalls == 7)
+							Board.allBlueBallsFell = true;
+
+						//Reset this for the next turn.
 						whiteTouchedAnotherBall = false;
-						currentColorBallHasFallen = false;
+
+
 					}
+					actualJump=jumpConstant;
+					System.out.println("cycle");
 
-					//If a ball of the same color as the current player falls in a hole:
-					else if(currentColorBallHasFallen){
-						//Reset all flags (whiteHasFallen and ballsAreMoving are already false). 
-						//The turn remains with the same player.
-						playerHasMadeHisTurn = false;
-						currentColorBallHasFallen = false;
-						whiteTouchedAnotherBall = false;
-					}
-
-					//If white ball didn't touch any other ball:
-					else if(!whiteTouchedAnotherBall){
-						//The other player gets the turn.
-						turn = 1-turn;
-						playerHasMadeHisTurn = false;
-					}
-
-					//Reset this for the next turn.
-					whiteTouchedAnotherBall = false;
-
+					handleMan.handle(balls, holes, actualJump, jumpConstant);
 
 				}
-				actualJump=jumpConstant;
-				System.out.println("cycle");
-
-				handleMan.handle(balls, holes, actualJump, jumpConstant);
 				repaint();
+				lowerPanel.repaint();
 				Thread.sleep(actualJump);
 			}
 			catch (InterruptedException e) {
@@ -232,14 +305,11 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 	public void paintComponent(Graphics g) {
 		System.out.println("repainting");
 		super.paintComponent(g);
-
 		g.setColor(Color.WHITE);
 		g.fillOval(whiteLine-3, yBounds/2-3, 6, 6);
 		g.drawLine(whiteLine, 0, whiteLine, yBounds);
 		g.setColor(Color.BLACK);
 		g.fillOval((int)(0.825*xBounds), yBounds/2, 5, 5);
-		g.setColor(Color.GREEN);
-		g.drawString(String.valueOf(turn), 10, 50);
 
 		for(int i=0; i<balls.size(); i++) {
 			g.setColor(balls.get(i).getColor());	
@@ -269,8 +339,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 			g.setColor(Color.WHITE);
 			g.drawLine((int)balls.get(0).getX(), (int)balls.get(0).getY(), (int)eX, (int)eY);
 		}
-		
-		g.drawString("RED Score: "+String.valueOf(redScore)+" BLUE Score: "+String.valueOf(blueScore), 10, yBounds-50);
+
 	}
 
 	//Getters and setters.
@@ -307,6 +376,12 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 		Board.handleMan = handleMan;
 	}
 
+	public JPanel getLowerPanel() {
+		return lowerPanel;
+	}
+	public void setLowerPanel(JPanel lowerPanel) {
+		this.lowerPanel = lowerPanel;
+	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -398,4 +473,76 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 
 
 
+}
+
+//A class for the lower JPanel.
+class LowerJPanel extends JPanel{
+	public LowerJPanel() {
+		// TODO Auto-generated constructor stub	
+		setLayout( new BorderLayout() );
+		setPreferredSize(new Dimension(Board.getXbounds(),102));
+	}
+
+	@Override 
+	public void paintComponent(Graphics g) { 
+		super.paintComponent(g); 
+		g.setColor(Color.DARK_GRAY);
+		g.drawLine(180, 0, 180, 200);
+		g.drawLine(320, 0, 320, 200);
+
+
+		g.setColor(Color.BLACK);
+		g.drawString("RED Score: "+String.valueOf(Board.redScore), 20, 20);
+		g.drawString("BLUE Score: "+String.valueOf(Board.blueScore), 20, 60);
+
+		g.setColor(Color.RED);
+		for(int i=0; i<7; i++){
+			g.drawOval(20*(i+1), 25, Board.ballSize,Board.ballSize);
+		}
+		for(int i=0; i<Board.fallenRedBalls; i++){
+			g.fillOval(20*(i+1), 25, Board.ballSize,Board.ballSize);
+		}
+		g.setColor(Color.BLUE);
+		for(int i=0; i<7; i++){
+			g.drawOval(20*(i+1), 65, Board.ballSize,Board.ballSize);
+		}
+		for(int i=0; i<Board.fallenBlueBalls; i++){
+			g.fillOval(20*(i+1), 65, Board.ballSize,Board.ballSize);
+		}
+
+		if(Board.turn == 0){
+			g.setColor(Color.RED);
+			g.fillRect(200, 30, 100, 60);
+			if(!Board.quit){
+				g.setColor(Color.BLACK);
+				g.drawString("Turn: RED Player", 200, 20);
+			}
+			else{
+				g.setColor(Color.BLACK);
+				g.drawString("RED PLAYER WINS!", 200, 20);
+				g.setColor(Color.ORANGE);
+				Font f = new Font("serif", Font.PLAIN, 100);
+				g.setFont(f);
+				g.drawString("WIN  RED  WIN", 340, 80);
+
+			}
+		}
+		if(Board.turn == 1){
+			g.setColor(Color.BLUE);
+			g.fillRect(200, 30, 100, 60);
+			if(!Board.quit){
+				g.setColor(Color.BLACK);
+				g.drawString("Turn: BLUE Player", 200, 20);
+			}
+			else{
+				g.setColor(Color.BLACK);
+				g.drawString("BLUE PLAYER WINS!", 200, 20);
+				g.setColor(Color.ORANGE);
+				Font f = new Font("serif", Font.PLAIN, 100);
+				g.setFont(f);
+				g.drawString("WIN  BLUE  WIN", 340, 80);
+
+			}
+		}
+	} 
 }
