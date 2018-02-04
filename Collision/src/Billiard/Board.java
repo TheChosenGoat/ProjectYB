@@ -475,7 +475,7 @@ public class Board extends JPanel implements Runnable, ActionListener, MouseList
 
 }
 
-//A class for the lower JPanel.
+//A class for the lower JPanel..
 class LowerJPanel extends JPanel{
 	public LowerJPanel() {
 		// TODO Auto-generated constructor stub	
